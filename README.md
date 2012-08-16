@@ -1,4 +1,4 @@
-# Clash
+# Aside
 Aside is a Bukkit plugin that aims to provide an improved chat experience for medium-to-large Minecraft servers. It adds a variety of features to chat, including:
 * Quick, easy and intuitive multi-recipient private messaging
 * Lightweight pseudo-channels for even easier private discussion, without the confusion or isolation of full channels
