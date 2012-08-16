@@ -1,6 +1,6 @@
 name: Aside
 description: Better multi-user private chat, sound notifications and name highlighting for mentioned players, and other assorted chat improvements.
-version: 0.1.0
+version: 0.2.0
 author: makskay
 
 main: me.makskay.bukkit.aside.AsidePlugin

@@ -35,7 +35,7 @@ public class PlayerListener implements Listener {
 		ArrayList<String> newMessage = new ArrayList<String>();
 		
 		for (Player recipient : Bukkit.getOnlinePlayers()) {
-			channelRecipients.add(recipient); // placeholder until channels are implemented properly
+			channelRecipients.add(recipient); // TODO Implement proper chat-to-group functionality
 		}
 		
 		for (String word : words) {
