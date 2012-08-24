@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import me.makskay.bukkit.aside.AsidePlugin;
+import me.makskay.bukkit.aside.ChatGroup;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,6 +53,34 @@ public class PlayerListener implements Listener {
 				}
 			}
 			
+			else if (word.startsWith("<")) { // if the word is a <mention tag
+				ChatGroup group = plugin.getGroupManager().getGroupByName(word.substring(1));
+				
+				if (group != null) {
+					HashSet<String> members = group.getMembers();
+				
+					for (String name : members) {
+						Player recipient = Bukkit.getPlayer(name);
+					
+						if (recipient != null) {
+							privateRecipients.add(recipient);
+						}
+					}
+				
+					if (members.isEmpty()) {
+						newMessage.add(ChatColor.GRAY + word + ChatColor.WHITE); // add color formatting
+					}
+				
+					else {
+						newMessage.add(word);
+					}
+				}
+				
+				else {
+					newMessage.add(word);
+				}
+			}
+			
 			else if (word.startsWith("@")) { // if the word is an @mention tag
 				Player recipient = plugin.getPlayerByNameSubstring(word.substring(1));
 				
@@ -83,7 +112,7 @@ public class PlayerListener implements Listener {
 			}
 		}
 		
-		else { // if there are one or more >mention tags
+		else { // if there are one or more >mention or <mention tags
 			event.getRecipients().add(player);
 			event.getRecipients().addAll(privateRecipients);
 			

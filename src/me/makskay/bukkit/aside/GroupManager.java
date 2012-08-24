@@ -41,6 +41,15 @@ public class GroupManager {
 	}
 	
 	public ChatGroup getGroupByName(String groupname) {
-		return groups.get(groupname);
+		ChatGroup group = groups.get(groupname);
+		
+		if (group != null) {
+			return group;
+		}
+		
+		else {
+			// TODO Try to find a group in config.yml; if one is found, deserialize, cache and return it
+			return null;
+		}
 	}
 }
