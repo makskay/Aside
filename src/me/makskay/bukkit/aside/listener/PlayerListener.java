@@ -14,6 +14,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener {
 	private AsidePlugin plugin;
@@ -53,7 +55,7 @@ public class PlayerListener implements Listener {
 				}
 			}
 			
-			else if (word.startsWith("<")) { // if the word is a <mention tag
+			else if (word.startsWith(">>")) { // if the word is a >>mention tag
 				ChatGroup group = plugin.getGroupManager().getGroupByName(word.substring(1));
 				
 				if (group != null) {
@@ -99,9 +101,16 @@ public class PlayerListener implements Listener {
 			}
 		}
 		
+		String newMessageText = "";
+		for (String word : newMessage) {
+			newMessageText = newMessageText + word + " "; // add color formatting to the outgoing message
+		}
+		
+		event.setMessage(newMessageText.trim());
+		
 		event.getRecipients().clear(); // remove message recipients (everyone by default)
 		
-		if (privateRecipients.isEmpty()) { // if there are no >mention tags
+		if (privateRecipients.isEmpty()) { // if there are no >mention or >>mention tags
 			event.getRecipients().addAll(channelRecipients);
 			event.getRecipients().addAll(directRecipients);
 			
@@ -109,25 +118,30 @@ public class PlayerListener implements Listener {
 			
 			for (Player recipient : directRecipients) {
 				recipient.playEffect(player.getLocation(), Effect.CLICK2, 0); // play sound notification for players @mentioned
+				//plugin.getPlayerManager().saveMessage(recipient, player.getName() + ": " + newMessageText); // TODO Only do this if recip is AFK
 			}
 		}
 		
-		else { // if there are one or more >mention or <mention tags
+		else { // if there are one or more >mention or >>mention tags
 			event.getRecipients().add(player);
 			event.getRecipients().addAll(privateRecipients);
 			
 			//event.setFormat(ChatColor.WHITE + "[" + ChatColor.GRAY + ">" + ChatColor.WHITE + "] " + event.getFormat());
 			
 			for (Player recipient : privateRecipients) {
-				recipient.playEffect(player.getLocation(), Effect.CLICK2, 0); // play sound notification for players >mentioned
+				recipient.playEffect(player.getLocation(), Effect.CLICK2, 0); // play sound notification for players >mentioned or >>mentioned
+				//plugin.getPlayerManager().saveMessage(recipient, player.getName() + ": " + newMessageText); // TODO Only do this if recip is AFK
 			}
 		}
-		
-		String newMessageText = "";
-		for (String word : newMessage) {
-			newMessageText = newMessageText + word + " "; // add color formatting to the outgoing message
-		}
-		
-		event.setMessage(newMessageText.trim());
+	}
+	
+	@EventHandler (priority = EventPriority.MONITOR)
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		plugin.getPlayerManager().registerPlayer(event.getPlayer());
+	}
+	
+	@EventHandler (priority = EventPriority.MONITOR)
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		plugin.getPlayerManager().releasePlayer(event.getPlayer());
 	}
 }

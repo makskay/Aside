@@ -1,0 +1,18 @@
+# An example of serialized group data for a few groups
+
+groups:
+  admins:
+    owner: xanwell
+    members:
+      - xanwell
+      - walliwall
+      - sanos99
+      - remypas
+      - sjhorm
+      - minethor
+  diamond-miners:
+    owner: itsbunny
+    members:
+      - itsbunny
+      - urbancheese
+      - sebs_craft

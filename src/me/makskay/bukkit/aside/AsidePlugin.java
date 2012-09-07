@@ -1,57 +1,113 @@
 package me.makskay.bukkit.aside;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.logging.Logger;
-
 import me.makskay.bukkit.aside.listener.PlayerListener;
+import me.makskay.bukkit.aside.util.ConfigAccessor;
+import me.makskay.bukkit.aside.util.Updater;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AsidePlugin extends JavaPlugin {
 	private GroupManager groupManager;
-	private Logger log;
+	private PlayerManager playerManager;
+	
+	private ConfigAccessor configYml;
+	private ConfigAccessor groupsYml;
 	
 	public void onEnable() {
-		log = this.getLogger();
-		
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
 		
-		log.info("Loading saved groups from groups.yml...");
+		configYml = new ConfigAccessor(this, "config.yml");
+		groupsYml = new ConfigAccessor(this, "groups.yml");
 		
-	    File groupsFile = new File(getDataFolder(), "groups.yml");
-	    FileConfiguration groupsConfig = YamlConfiguration.loadConfiguration(groupsFile);
-	    
-	    HashMap<String, ChatGroup> groups = new HashMap<String, ChatGroup>();
+		if (configYml.getConfig().getBoolean("auto-update")) {
+			@SuppressWarnings("unused")
+			Updater updater = new Updater(this, "aside", this.getFile(), Updater.UpdateType.DEFAULT, false);
+		}
 		
-		for (String groupName : groupsConfig.getConfigurationSection("groups").getKeys(false)) {
-			groups.put(groupName, new ChatGroup(groupsConfig.getString("groups." + groupName + ".owner"),
-					groupsConfig.getStringList("groups." + groupName + ".members")));
-		} 
-		
-		groupManager = new GroupManager(this, groups);
-		
-		log.info("Saved groups loaded.");
+		groupManager = new GroupManager(this);
+		playerManager = new PlayerManager(this);
 	}
 	
 	public void onDisable() {
-		// TODO Gracefully save the loaded groups to groups.yml on disk
+		// TODO Gracefully save the loaded groups to config.yml on disk
 	}
 	
 	public boolean onCommand (CommandSender sender, Command command, String commandLabel, String[] args) {
 		if (command.getName().equalsIgnoreCase("group")) {
-			if (!(args.length > 0)) {
-				sender.sendMessage("/group <add|remove|make|delete> <group-name> [command-specific arguments]");
+			if (args.length < 2) {
+				return false;
+			}
+			
+			if ((args[0].equalsIgnoreCase("create")) || (args[0].equalsIgnoreCase("c"))) {
+				// TODO Make a new group, with name args[1] and members args[2 ->]
+			}
+			
+			ChatGroup group = groupManager.getGroupByName(args[1]);
+			if (group == null) {
+				sender.sendMessage(ChatColor.RED + "There's no group named \"" + args[1] + "\"!");
 				return true;
 			}
 			
-			// TODO Write actual implementations for /group subcommands
+			boolean senderCanPerformOp = false;
+			
+			Player player = (Player) sender;
+			if (player == null) {
+				senderCanPerformOp = true;
+			}
+			
+			else {
+				if (player.hasPermission("aside.group.admin")) {
+					senderCanPerformOp = true;
+				}
+				
+				else if (player.getName().equals(group.getOwner())) {
+					senderCanPerformOp = true;
+				}
+			}
+			
+			if (!senderCanPerformOp) {
+				sender.sendMessage(ChatColor.RED + "You don't have permission to edit that group!");
+				return true;
+			}
+			
+			if ((args[0].equalsIgnoreCase("delete")) || (args[0].equalsIgnoreCase("d"))) {
+				groupManager.deleteGroup(args[1]);
+
+				groupsYml.getConfig().set("groups." + args[1], null);
+				groupsYml.saveConfig();
+				groupsYml.reloadConfig();
+				
+				sender.sendMessage(ChatColor.GREEN + "Successfully deleted group \"" + args[1] + "\"");
+				return true;
+			}
+			
+			else if ((args[0].equalsIgnoreCase("add")) || (args[0].equalsIgnoreCase("a"))) {
+				for (int i = 2; i < args.length; i++) {
+					groupManager.addMemberToGroup(args[1], args[i]);
+					sender.sendMessage(ChatColor.GREEN + "Added \"" + args[i] + "\" to group \"" + args[1] + "\"");
+				}
+				
+				// TODO Make changes to the copy on file
+			}
+			
+			else if ((args[0].equalsIgnoreCase("remove")) || (args[0].equalsIgnoreCase("r"))) {
+				for (int i = 2; i < args.length; i++) {
+					groupManager.removeMemberFromGroup(args[1], args[i]);
+					sender.sendMessage(ChatColor.GREEN + "Removed \"" + args[i] + "\" from group \"" + args[1] + "\"");
+				}
+				
+				// TODO Make changes to the copy on file
+			}
+			
+		}
+		
+		else if (command.getName().equals("groups")) {
+			//TODO list groups
 		}
 		
 		return false;
@@ -67,8 +123,10 @@ public class AsidePlugin extends JavaPlugin {
 			return null;
 		}
 		
+		s = s.toLowerCase();
+		
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (p.getName().toLowerCase().contains(s.toLowerCase())) {
+			if (p.getName().toLowerCase().contains(s)) {
 				return p;
 			}
 		}
@@ -78,5 +136,9 @@ public class AsidePlugin extends JavaPlugin {
 	
 	public GroupManager getGroupManager() {
 		return groupManager;
+	}
+
+	public PlayerManager getPlayerManager() {
+		return playerManager;
 	}
 }

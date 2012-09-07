@@ -13,9 +13,8 @@ public class GroupManager {
 	@SuppressWarnings("unused")
 	private AsidePlugin plugin;
 	
-	public GroupManager(AsidePlugin plugin, HashMap<String, ChatGroup> groups) {
+	public GroupManager(AsidePlugin plugin) {
 		this.plugin = plugin;
-		this.groups = groups;
 	}
 	
 	public HashSet<Player> getChannelRecipientsForMessageBy(String playername) {
@@ -48,8 +47,21 @@ public class GroupManager {
 		}
 		
 		else {
-			// TODO Try to find a group in config.yml; if one is found, deserialize, cache and return it
+			// TODO Try to find a group in groups.yml; if one is found, deserialize, cache and return it
 			return null;
 		}
+	}
+
+	public void deleteGroup(String groupname) {
+		groups.remove(groupname);
+	}
+
+	public void addMemberToGroup(String groupname, String playername) {
+		getGroupByName(groupname).removeMember(playername);
+	}
+
+	public void removeMemberFromGroup(String groupname, String playername) {
+		getGroupByName(groupname).removeMember(playername);
+		
 	}
 }

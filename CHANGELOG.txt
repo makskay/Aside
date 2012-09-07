@@ -1,0 +1,5 @@
+1.0
++ Added @tagging, >tagging and >>tagging within messages
++ Added sound notifications for tagged players
++ Added /group command used to manage chat groups
++ Added /groups command used to list chat groups

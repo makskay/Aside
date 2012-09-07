@@ -23,4 +23,8 @@ public class ChatGroup {
 	public HashSet<String> getMembers() {
 		return this.members;
 	}
+
+	public void removeMember(String playername) {
+		members.remove(playername);
+	}
 }
