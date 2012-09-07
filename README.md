@@ -4,10 +4,10 @@
 Aside is a plugin for Bukkit-based Minecraft servers. It adds a variety of features to the server chat.
 
 ## Never miss a message
-Messages that mention your name or a group of which you’re a member will play a sound notification when they come in. If you’re AFK, messages that mention you will be saved for easy viewing when you return.
+Messages that mention your name or a group of which you're a member will play a sound notification when they come in. If you're AFK, messages that mention you will be saved for easy viewing when you return.
 
 ## Private messaging without the hassle
-Messages that mention your name or a group of which you’re a member will play a sound notification when they come in. If you’re AFK, messages that mention you will be saved for easy viewing when you return.
+Send private messages without using any commands, even if you're messaging multiple players. Create chatgroups for those people you're always talking to all at  once.
 
 ## Quiet self-updating
 I'll keep quietly improving Aside in the background, and updates will be pushed to you automatically. Just sit back and relax.
