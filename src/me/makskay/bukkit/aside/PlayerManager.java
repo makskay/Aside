@@ -7,10 +7,11 @@ import org.bukkit.entity.Player;
 
 public class PlayerManager {
 	//private AsidePlugin plugin;
-	private HashMap<String, ArrayList<String>> savedMessages = new HashMap<String, ArrayList<String>>();
+	private HashMap<String, ArrayList<String>> savedMessages;
 	
 	public PlayerManager(AsidePlugin plugin) {
 		//this.plugin = plugin;
+		savedMessages = new HashMap<String, ArrayList<String>>();
 	}
 	
 	public void registerPlayer(Player player) {

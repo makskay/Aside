@@ -1,8 +1,9 @@
 package me.makskay.bukkit.aside;
 
-import me.makskay.bukkit.aside.listener.PlayerListener;
+import java.util.ArrayList;
+
 import me.makskay.bukkit.aside.util.ConfigAccessor;
-import me.makskay.bukkit.aside.util.Updater;
+//import me.makskay.bukkit.aside.util.Updater;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,8 +16,8 @@ public class AsidePlugin extends JavaPlugin {
 	private GroupManager groupManager;
 	private PlayerManager playerManager;
 	
-	private ConfigAccessor configYml;
-	private ConfigAccessor groupsYml;
+	ConfigAccessor configYml;
+	ConfigAccessor groupsYml;
 	
 	public void onEnable() {
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
@@ -24,9 +25,15 @@ public class AsidePlugin extends JavaPlugin {
 		configYml = new ConfigAccessor(this, "config.yml");
 		groupsYml = new ConfigAccessor(this, "groups.yml");
 		
+		configYml.reloadConfig();
+		groupsYml.reloadConfig();
+		
+		configYml.saveDefaultConfig();
+		groupsYml.saveDefaultConfig();
+		
 		if (configYml.getConfig().getBoolean("auto-update")) {
-			@SuppressWarnings("unused")
-			Updater updater = new Updater(this, "aside", this.getFile(), Updater.UpdateType.DEFAULT, false);
+			//@SuppressWarnings("unused")
+			//Updater updater = new Updater(this, "aside", this.getFile(), Updater.UpdateType.DEFAULT, false);
 		}
 		
 		groupManager = new GroupManager(this);
@@ -34,7 +41,12 @@ public class AsidePlugin extends JavaPlugin {
 	}
 	
 	public void onDisable() {
-		// TODO Gracefully save the loaded groups to config.yml on disk
+		for (ChatGroup group : groupManager.getLoadedGroups()) {
+			String path = "groups." + group.getName() + ".";
+			
+			groupsYml.getConfig().set(path + "owner", group.getOwner());
+			groupsYml.getConfig().set(path + "members", group.getMembers());
+		}
 	}
 	
 	public boolean onCommand (CommandSender sender, Command command, String commandLabel, String[] args) {
@@ -44,7 +56,23 @@ public class AsidePlugin extends JavaPlugin {
 			}
 			
 			if ((args[0].equalsIgnoreCase("create")) || (args[0].equalsIgnoreCase("c"))) {
-				// TODO Make a new group, with name args[1] and members args[2 ->]
+				ArrayList<String> members = new ArrayList<String>();
+				
+				if (sender instanceof Player) {
+					members.add(sender.getName());
+				}
+				
+				sender.sendMessage(ChatColor.GREEN + "Created group \"" + args[1] + "\"");
+				
+				for (int i = 2; i < args.length; i++) {
+					members.add(args[i]);
+					sender.sendMessage(ChatColor.GREEN + "Added \"" + args[i] + "\" to group \"" + args[1] + "\"");
+				}
+
+				ChatGroup group = new ChatGroup(args[1], sender.getName(), members);
+				groupManager.registerGroup(group);
+				
+				return true;
 			}
 			
 			ChatGroup group = groupManager.getGroupByName(args[1]);
@@ -92,7 +120,7 @@ public class AsidePlugin extends JavaPlugin {
 					sender.sendMessage(ChatColor.GREEN + "Added \"" + args[i] + "\" to group \"" + args[1] + "\"");
 				}
 				
-				// TODO Make changes to the copy on file
+				// TODO Make changes to the copy on file if "always-backup-changes" is set to true
 			}
 			
 			else if ((args[0].equalsIgnoreCase("remove")) || (args[0].equalsIgnoreCase("r"))) {
@@ -101,13 +129,21 @@ public class AsidePlugin extends JavaPlugin {
 					sender.sendMessage(ChatColor.GREEN + "Removed \"" + args[i] + "\" from group \"" + args[1] + "\"");
 				}
 				
-				// TODO Make changes to the copy on file
+				// TODO Make changes to the copy on file if "always-backup-changes" is set to true
 			}
 			
 		}
 		
 		else if (command.getName().equals("groups")) {
-			//TODO list groups
+			String list = ChatColor.GREEN + "Groups: " + ChatColor.WHITE;
+			
+			for (String name : groupManager.getAllGroupNames()) {
+				list.concat(name);
+				list.concat(" ");
+			}
+			
+			sender.sendMessage(list.trim());
+			return true;
 		}
 		
 		return false;

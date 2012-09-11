@@ -1,7 +1,9 @@
 package me.makskay.bukkit.aside.util;
 
 /** Credit to SagaciousZed for this utility class.
- ** https://gist.github.com/3174347 */
+ ** https://gist.github.com/3174347 
+ **
+ ** @author SagaciousZed */
 
 import java.io.File;
 import java.io.IOException;

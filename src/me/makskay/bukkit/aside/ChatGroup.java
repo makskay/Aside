@@ -1,26 +1,32 @@
 package me.makskay.bukkit.aside;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.HashSet;
 
 public class ChatGroup {
+	private String name;
 	private String owner;
-	private HashSet<String> members;
+	private ArrayList<String> members;
 	
-	public ChatGroup(String owner, List<String> membersFromFile) {
+	public ChatGroup(String name, String owner, List<String> membersFromFile) {
+		this.name = name;
 		this.owner = owner;
 		
-		this.members = new HashSet<String>();
+		this.members = new ArrayList<String>();
 		for (String member : membersFromFile) {
 			this.members.add(member);
 		}
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 	public String getOwner() {
 		return this.owner;
 	}
 	
-	public HashSet<String> getMembers() {
+	public ArrayList<String> getMembers() {
 		return this.members;
 	}
 

@@ -1,10 +1,8 @@
-package me.makskay.bukkit.aside.listener;
+package me.makskay.bukkit.aside;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import me.makskay.bukkit.aside.AsidePlugin;
-import me.makskay.bukkit.aside.ChatGroup;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -59,7 +57,7 @@ public class PlayerListener implements Listener {
 				ChatGroup group = plugin.getGroupManager().getGroupByName(word.substring(1));
 				
 				if (group != null) {
-					HashSet<String> members = group.getMembers();
+					ArrayList<String> members = group.getMembers();
 				
 					for (String name : members) {
 						Player recipient = Bukkit.getPlayer(name);
@@ -108,14 +106,7 @@ public class PlayerListener implements Listener {
 		
 		event.setMessage(newMessageText.trim());
 		
-		event.getRecipients().clear(); // remove message recipients (everyone by default)
-		
 		if (privateRecipients.isEmpty()) { // if there are no >mention or >>mention tags
-			event.getRecipients().addAll(channelRecipients);
-			event.getRecipients().addAll(directRecipients);
-			
-			//event.setFormat(ChatColor.WHITE + "[" + ChatColor.YELLOW + "@" + ChatColor.WHITE + "] " + event.getFormat());
-			
 			for (Player recipient : directRecipients) {
 				recipient.playEffect(player.getLocation(), Effect.CLICK2, 0); // play sound notification for players @mentioned
 				//plugin.getPlayerManager().saveMessage(recipient, player.getName() + ": " + newMessageText); // TODO Only do this if recip is AFK
@@ -123,12 +114,10 @@ public class PlayerListener implements Listener {
 		}
 		
 		else { // if there are one or more >mention or >>mention tags
-			event.getRecipients().add(player);
-			event.getRecipients().addAll(privateRecipients);
-			
-			//event.setFormat(ChatColor.WHITE + "[" + ChatColor.GRAY + ">" + ChatColor.WHITE + "] " + event.getFormat());
+			event.setCancelled(true);
 			
 			for (Player recipient : privateRecipients) {
+				recipient.sendMessage(event.getFormat() + event.getMessage());
 				recipient.playEffect(player.getLocation(), Effect.CLICK2, 0); // play sound notification for players >mentioned or >>mentioned
 				//plugin.getPlayerManager().saveMessage(recipient, player.getName() + ": " + newMessageText); // TODO Only do this if recip is AFK
 			}

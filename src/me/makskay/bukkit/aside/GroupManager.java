@@ -1,42 +1,18 @@
 package me.makskay.bukkit.aside;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import java.util.List;
 
 public class GroupManager {
-	private HashMap<String, ChatGroup> groups = new HashMap<String, ChatGroup>(); // mapping of group names to group objects
-	private HashMap<String, String> chatTo = new HashMap<String, String>(); // mapping of player names to group names
+	private HashMap<String, ChatGroup> groups; // mapping of group names to group objects
 	
-	@SuppressWarnings("unused")
 	private AsidePlugin plugin;
 	
 	public GroupManager(AsidePlugin plugin) {
 		this.plugin = plugin;
-	}
-	
-	public HashSet<Player> getChannelRecipientsForMessageBy(String playername) {
-		if (chatTo.get(playername) == null) {
-			return null;
-		}
-		
-		ChatGroup group = groups.get(chatTo.get(playername));
-		
-		if (group == null) {
-			return null;
-		}
-		
-		HashSet<Player> recipients = new HashSet<Player>();
-		
-		for (String recipient : group.getMembers()) {
-			if (Bukkit.getPlayer(recipient) != null) {
-				recipients.add(Bukkit.getPlayer(recipient));
-			}
-		}
-		
-		return recipients;
+		groups = new HashMap<String, ChatGroup>();
 	}
 	
 	public ChatGroup getGroupByName(String groupname) {
@@ -46,10 +22,22 @@ public class GroupManager {
 			return group;
 		}
 		
-		else {
-			// TODO Try to find a group in groups.yml; if one is found, deserialize, cache and return it
-			return null;
+		String path = "groups." + groupname;
+		String ownername = plugin.configYml.getConfig().getString(path + ".owner");
+		List<String> members = plugin.configYml.getConfig().getStringList(path + ".members");
+		
+		if ((ownername != null) && (members != null)) {
+			group = new ChatGroup(groupname, ownername, members);
+			groups.put(groupname, group);
+			
+			return group;
 		}
+		
+		return null;
+	}
+	
+	public void registerGroup(ChatGroup group) {
+		groups.put(group.getName(), group);
 	}
 
 	public void deleteGroup(String groupname) {
@@ -61,7 +49,24 @@ public class GroupManager {
 	}
 
 	public void removeMemberFromGroup(String groupname, String playername) {
-		getGroupByName(groupname).removeMember(playername);
+		getGroupByName(groupname).removeMember(playername);	
+	}
+	
+	public Collection<ChatGroup> getLoadedGroups() {
+		return groups.values();
+	}
+	
+	public HashSet<String> getAllGroupNames() {
+		HashSet<String> groupNames = new HashSet<String>();
 		
+		for (ChatGroup group : groups.values()) {
+			groupNames.add(group.getName());
+		}
+		
+		for (String groupName : plugin.groupsYml.getConfig().getConfigurationSection("groups").getKeys(false)) {
+			groupNames.add(groupName);
+		}
+		
+		return groupNames;
 	}
 }
