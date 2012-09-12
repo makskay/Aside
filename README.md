@@ -33,8 +33,8 @@ Including a *>username* tag will send the message privately to the person you me
 ### Hold a private conference
 Including the *>>groupname* tag will send the message privately to every person who's a member of the specified group, along with a sound notification to each.
 To create and manage groups, use the following commands, which do exactly what you'd expect:
-+ */group create  <groupname>              [list of members separated by spaces]*
-+ */group delete  <groupname>*
-+ */group add     <groupname> <playername> [list of additional playernames separated by spaces]*
-+ */group remove  <groupname> <playername> [list of additional playernames separated by spaces]*
-+ */group members <groupname>*
++ /group create  *[groupname]              [list of members separated by spaces]*
++ /group delete  *[groupname]*
++ /group add     *[groupname] [playername] [list of additional playernames separated by spaces]*
++ /group remove  *[groupname] [playername] [list of additional playernames separated by spaces]*
++ /group members *[groupname]*
