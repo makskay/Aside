@@ -1,11 +1,10 @@
 # Aside
-### Chat improvements, done right
-
 Aside is a chat improvement plugin that adds a variety of features to server chat.
 
 ## Why Aside?
 Most other chat enhancement plugins out there are clunky and unintuitive for the average user. Chat channels take forever to set up, and they divide your server community. Private messaging is single-recipient and relies on slash commands that are hard for newer users to get the hang of.
-*Aside is intuitive, Aside is self-demonstrating, Aside does it better... by doing it differently.*
+
+So why Aside? In short: *Aside is intuitive, Aside is self-demonstrating, Aside does it better... by doing it differently.*
 
 ## Features
 
