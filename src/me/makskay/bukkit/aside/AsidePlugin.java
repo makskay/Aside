@@ -47,6 +47,8 @@ public class AsidePlugin extends JavaPlugin {
 			groupsYml.getConfig().set(path + "owner", group.getOwner());
 			groupsYml.getConfig().set(path + "members", group.getMembers());
 		}
+		
+		groupsYml.saveConfig();
 	}
 	
 	public boolean onCommand (CommandSender sender, Command command, String commandLabel, String[] args) {
@@ -56,6 +58,11 @@ public class AsidePlugin extends JavaPlugin {
 			}
 			
 			if ((args[0].equalsIgnoreCase("create")) || (args[0].equalsIgnoreCase("c"))) {
+				if (groupManager.getGroupByName(args[1]) != null) {
+					sender.sendMessage(ChatColor.RED + "A group by that name already exists!");
+					return true;
+				}
+				
 				ArrayList<String> members = new ArrayList<String>();
 				
 				if (sender instanceof Player) {
@@ -65,7 +72,7 @@ public class AsidePlugin extends JavaPlugin {
 				sender.sendMessage(ChatColor.GREEN + "Created group \"" + args[1] + "\"");
 				
 				for (int i = 2; i < args.length; i++) {
-					members.add(args[i]);
+					members.add(args[i].toLowerCase());
 					sender.sendMessage(ChatColor.GREEN + "Added \"" + args[i] + "\" to group \"" + args[1] + "\"");
 				}
 
@@ -81,18 +88,30 @@ public class AsidePlugin extends JavaPlugin {
 				return true;
 			}
 			
+			if ((args[0].equalsIgnoreCase("members")) || (args[0].equalsIgnoreCase("m"))) {
+				String list = ChatColor.GREEN + "Members: " + ChatColor.WHITE;
+				
+				for (String name : group.getMembers()) {
+					list = list + name + " ";
+				}
+				
+				sender.sendMessage(list.trim());
+				return true;
+			}
+			
 			boolean senderCanPerformOp = false;
 			
-			Player player = (Player) sender;
-			if (player == null) {
+			if (!(sender instanceof Player)) {
 				senderCanPerformOp = true;
 			}
 			
 			else {
-				if (player.hasPermission("aside.group.admin")) {
+				Player player  = (Player) sender;
+				
+				if (player.hasPermission("aside.admin")) {
 					senderCanPerformOp = true;
 				}
-				
+					
 				else if (player.getName().equals(group.getOwner())) {
 					senderCanPerformOp = true;
 				}
@@ -116,20 +135,38 @@ public class AsidePlugin extends JavaPlugin {
 			
 			else if ((args[0].equalsIgnoreCase("add")) || (args[0].equalsIgnoreCase("a"))) {
 				for (int i = 2; i < args.length; i++) {
-					groupManager.addMemberToGroup(args[1], args[i]);
-					sender.sendMessage(ChatColor.GREEN + "Added \"" + args[i] + "\" to group \"" + args[1] + "\"");
+					String memberNameLowcase = args[i].toLowerCase();
+					
+					if (!group.getMembers().contains(memberNameLowcase)) {
+						groupManager.addMemberToGroup(args[1], memberNameLowcase);
+						sender.sendMessage(ChatColor.GREEN + "Added \"" + args[i] + "\" to group \"" + args[1] + "\"");
+					}
+					
+					else {
+						sender.sendMessage(ChatColor.RED + "\"" + args[i] + "\" is already a member of group \"" + args[1] + "\"!");
+					}
 				}
 				
 				// TODO Make changes to the copy on file if "always-backup-changes" is set to true
+				return true;
 			}
 			
 			else if ((args[0].equalsIgnoreCase("remove")) || (args[0].equalsIgnoreCase("r"))) {
 				for (int i = 2; i < args.length; i++) {
-					groupManager.removeMemberFromGroup(args[1], args[i]);
-					sender.sendMessage(ChatColor.GREEN + "Removed \"" + args[i] + "\" from group \"" + args[1] + "\"");
+					String memberNameLowcase = args[i].toLowerCase();
+					
+					if (group.getMembers().contains(memberNameLowcase)) {
+						groupManager.removeMemberFromGroup(args[1], memberNameLowcase);
+						sender.sendMessage(ChatColor.GREEN + "Removed \"" + args[i] + "\" from group \"" + args[1] + "\"");
+					}
+					
+					else {
+						sender.sendMessage(ChatColor.RED + "\"" + args[i] + "\" isn't a member of group \"" + args[1] + "\"!");
+					}
 				}
 				
 				// TODO Make changes to the copy on file if "always-backup-changes" is set to true
+				return true;
 			}
 			
 		}
@@ -138,8 +175,7 @@ public class AsidePlugin extends JavaPlugin {
 			String list = ChatColor.GREEN + "Groups: " + ChatColor.WHITE;
 			
 			for (String name : groupManager.getAllGroupNames()) {
-				list.concat(name);
-				list.concat(" ");
+				list = list + name + " ";
 			}
 			
 			sender.sendMessage(list.trim());

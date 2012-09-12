@@ -23,8 +23,8 @@ public class GroupManager {
 		}
 		
 		String path = "groups." + groupname;
-		String ownername = plugin.configYml.getConfig().getString(path + ".owner");
-		List<String> members = plugin.configYml.getConfig().getStringList(path + ".members");
+		String ownername = plugin.groupsYml.getConfig().getString(path + ".owner");
+		List<String> members = plugin.groupsYml.getConfig().getStringList(path + ".members");
 		
 		if ((ownername != null) && (members != null)) {
 			group = new ChatGroup(groupname, ownername, members);
@@ -59,7 +59,7 @@ public class GroupManager {
 	public HashSet<String> getAllGroupNames() {
 		HashSet<String> groupNames = new HashSet<String>();
 		
-		for (ChatGroup group : groups.values()) {
+		for (ChatGroup group : getLoadedGroups()) {
 			groupNames.add(group.getName());
 		}
 		

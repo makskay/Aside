@@ -25,7 +25,6 @@ public class PlayerListener implements Listener {
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		String message = event.getMessage();
-		Player player = event.getPlayer();
 		
 		String[] words = message.split(" "); // split the message into separate words to be processed individually
 		
@@ -40,21 +39,8 @@ public class PlayerListener implements Listener {
 		}
 		
 		for (String word : words) {
-			if (word.startsWith(">")) { // if the word is a >mention tag
-				Player recipient = plugin.getPlayerByNameSubstring(word.substring(1));
-				
-				if (recipient != null) {
-					privateRecipients.add(recipient);
-					newMessage.add(ChatColor.GRAY + word + ChatColor.WHITE); // add color formatting
-				}
-				
-				else {
-					newMessage.add(word);
-				}
-			}
-			
-			else if (word.startsWith(">>")) { // if the word is a >>mention tag
-				ChatGroup group = plugin.getGroupManager().getGroupByName(word.substring(1));
+			if (word.startsWith(">>")) { // if the word is a >>mention tag
+				ChatGroup group = plugin.getGroupManager().getGroupByName(word.substring(2));
 				
 				if (group != null) {
 					ArrayList<String> members = group.getMembers();
@@ -67,7 +53,7 @@ public class PlayerListener implements Listener {
 						}
 					}
 				
-					if (members.isEmpty()) {
+					if (!privateRecipients.isEmpty()) {
 						newMessage.add(ChatColor.GRAY + word + ChatColor.WHITE); // add color formatting
 					}
 				
@@ -80,6 +66,19 @@ public class PlayerListener implements Listener {
 					newMessage.add(word);
 				}
 			}
+			
+			else if (word.startsWith(">")) { // if the word is a >mention tag
+				Player recipient = plugin.getPlayerByNameSubstring(word.substring(1));
+				
+				if (recipient != null) {
+					privateRecipients.add(recipient);
+					newMessage.add(ChatColor.GRAY + word + ChatColor.WHITE); // add color formatting
+				}
+				
+				else {
+					newMessage.add(word);
+				}
+			} 
 			
 			else if (word.startsWith("@")) { // if the word is an @mention tag
 				Player recipient = plugin.getPlayerByNameSubstring(word.substring(1));
@@ -108,17 +107,20 @@ public class PlayerListener implements Listener {
 		
 		if (privateRecipients.isEmpty()) { // if there are no >mention or >>mention tags
 			for (Player recipient : directRecipients) {
-				recipient.playEffect(player.getLocation(), Effect.CLICK2, 0); // play sound notification for players @mentioned
+				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players @mentioned
 				//plugin.getPlayerManager().saveMessage(recipient, player.getName() + ": " + newMessageText); // TODO Only do this if recip is AFK
 			}
 		}
 		
 		else { // if there are one or more >mention or >>mention tags
-			event.setCancelled(true);
+			event.getRecipients().clear();
+			event.getRecipients().add(event.getPlayer());
+			
 			
 			for (Player recipient : privateRecipients) {
-				recipient.sendMessage(event.getFormat() + event.getMessage());
-				recipient.playEffect(player.getLocation(), Effect.CLICK2, 0); // play sound notification for players >mentioned or >>mentioned
+				event.getRecipients().add(recipient);
+				
+				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players >mentioned or >>mentioned
 				//plugin.getPlayerManager().saveMessage(recipient, player.getName() + ": " + newMessageText); // TODO Only do this if recip is AFK
 			}
 		}
