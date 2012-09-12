@@ -1,5 +1,5 @@
 # Aside
-### *Chat improvements, done right*
+### Chat improvements, done right
 
 Aside is a chat improvement plugin that adds a variety of features to server chat.
 
