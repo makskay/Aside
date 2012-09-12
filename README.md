@@ -1,6 +1,21 @@
 # Aside
 Aside is a chat improvement plugin that adds a variety of features to server chat.
 
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Aside](#aside)
+	- [Why Aside?](#why-aside)
+	- [Features](#features)
+		- [Never miss a message](#never-miss-a-message)
+		- [Private messaging without the hassle](#private-messaging-without-the-hassle)
+	- [Configuration](#configuration)
+		- [User-friendly installation](#user-friendly-installation)
+		- [Easy maintenance option](#easy-maintenance-option)
+	- [Using Aside](#using-aside)
+		- [Get someone's attention](#get-someones-attention)
+		- [Speak off the record](#speak-off-the-record)
+		- [Hold a private conference](#hold-a-private-conference)
+
 ## Why Aside?
 Most other chat enhancement plugins out there are clunky and unintuitive for the average user. Chat channels take forever to set up, and they divide your server community. Private messaging is single-recipient and relies on slash commands that are hard for newer users to get the hang of.
 
