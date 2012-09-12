@@ -1,5 +1,5 @@
 # Aside
-*"Chat improvements, done right"*
+## *Chat improvements, done right*
 
 Aside is a chat improvement plugin that adds a variety of features to server chat.
 
@@ -38,4 +38,4 @@ To create and manage groups, use the following commands, which do exactly what y
 + */group delete  <groupname>*
 + */group add     <groupname> <playername> [list of additional playernames separated by spaces]*
 + */group remove  <groupname> <playername> [list of additional playernames separated by spaces]*
-+ */group members <groupname>
++ */group members <groupname>*
