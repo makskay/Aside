@@ -8,7 +8,7 @@ main: me.makskay.bukkit.aside.AsidePlugin
 commands:
   group:
     description: Create and edit groups to whom messages can be sent.
-    usage: /<command> <create|delete|add|remove|members> <groupname> [command-specific arguments]
+    usage: /<command> <group-name> <members|delete|+playername|-playername>
     permission: aside.user
     permission-message: You don't have permission to create and edit groups!
   groups:

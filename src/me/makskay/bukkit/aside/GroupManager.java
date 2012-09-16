@@ -45,7 +45,7 @@ public class GroupManager {
 	}
 
 	public void addMemberToGroup(String groupname, String playername) {
-		getGroupByName(groupname).removeMember(playername);
+		getGroupByName(groupname).addMember(playername);
 	}
 
 	public void removeMemberFromGroup(String groupname, String playername) {

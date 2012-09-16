@@ -18,6 +18,12 @@ public class ChatGroup {
 		}
 	}
 	
+	public ChatGroup(String name, String owner) {
+		this.name = name;
+		this.owner = owner;
+		this.members = new ArrayList<String>();
+	}
+	
 	public String getName() {
 		return this.name;
 	}
@@ -28,6 +34,10 @@ public class ChatGroup {
 	
 	public ArrayList<String> getMembers() {
 		return this.members;
+	}
+	
+	public void addMember(String playername) {
+		members.add(playername);
 	}
 
 	public void removeMember(String playername) {

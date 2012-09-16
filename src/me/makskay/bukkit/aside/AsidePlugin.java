@@ -1,7 +1,5 @@
 package me.makskay.bukkit.aside;
 
-import java.util.ArrayList;
-
 import me.makskay.bukkit.aside.util.ConfigAccessor;
 //import me.makskay.bukkit.aside.util.Updater;
 
@@ -31,10 +29,10 @@ public class AsidePlugin extends JavaPlugin {
 		configYml.saveDefaultConfig();
 		groupsYml.saveDefaultConfig();
 		
-		if (configYml.getConfig().getBoolean("auto-update")) {
-			//@SuppressWarnings("unused")
-			//Updater updater = new Updater(this, "aside", this.getFile(), Updater.UpdateType.DEFAULT, false);
-		}
+		/*if (configYml.getConfig().getBoolean("auto-update")) { // auto-updater stuff
+			@SuppressWarnings("unused")
+			Updater updater = new Updater(this, "aside", this.getFile(), Updater.UpdateType.DEFAULT, false);
+		}*/
 		
 		groupManager = new GroupManager(this);
 		playerManager = new PlayerManager(this);
@@ -53,49 +51,38 @@ public class AsidePlugin extends JavaPlugin {
 	
 	public boolean onCommand (CommandSender sender, Command command, String commandLabel, String[] args) {
 		if (command.getName().equalsIgnoreCase("group")) {
-			if (args.length < 2) {
+			if (args.length == 0) { // if there were no arguments
 				return false;
 			}
 			
-			if ((args[0].equalsIgnoreCase("create")) || (args[0].equalsIgnoreCase("c"))) {
-				if (groupManager.getGroupByName(args[1]) != null) {
-					sender.sendMessage(ChatColor.RED + "A group by that name already exists!");
-					return true;
-				}
-				
-				ArrayList<String> members = new ArrayList<String>();
-				
-				if (sender instanceof Player) {
-					members.add(sender.getName());
-				}
-				
-				sender.sendMessage(ChatColor.GREEN + "Created group \"" + args[1] + "\"");
-				
-				for (int i = 2; i < args.length; i++) {
-					members.add(args[i].toLowerCase());
-					sender.sendMessage(ChatColor.GREEN + "Added \"" + args[i] + "\" to group \"" + args[1] + "\"");
-				}
-
-				ChatGroup group = new ChatGroup(args[1], sender.getName(), members);
+			ChatGroup group = groupManager.getGroupByName(args[0]);
+			if (group == null) {
+				group = new ChatGroup(args[0], sender.getName());
 				groupManager.registerGroup(group);
 				
-				return true;
+				sender.sendMessage(ChatColor.GREEN + "Created group \"" + args[0] + "\"");
 			}
 			
-			ChatGroup group = groupManager.getGroupByName(args[1]);
-			if (group == null) {
-				sender.sendMessage(ChatColor.RED + "There's no group named \"" + args[1] + "\"!");
-				return true;
+			if (args[1] == null) { // if the command was just "/group <group-name>"
+				return true; 
 			}
 			
-			if ((args[0].equalsIgnoreCase("members")) || (args[0].equalsIgnoreCase("m"))) {
+			else if (args[1].equalsIgnoreCase("members")) {
 				String list = ChatColor.GREEN + "Members: " + ChatColor.WHITE;
 				
-				for (String name : group.getMembers()) {
-					list = list + name + " ";
+				if (group.getMembers().isEmpty()) {
+					list = list + ChatColor.RED + "none";
 				}
 				
-				sender.sendMessage(list.trim());
+				else {
+					for (String name : group.getMembers()) {
+						list = list + name + " ";
+					}
+					
+					list = list.trim();
+				}
+				
+				sender.sendMessage(list);
 				return true;
 			}
 			
@@ -122,63 +109,64 @@ public class AsidePlugin extends JavaPlugin {
 				return true;
 			}
 			
-			if ((args[0].equalsIgnoreCase("delete")) || (args[0].equalsIgnoreCase("d"))) {
-				groupManager.deleteGroup(args[1]);
+			if (args[1].equalsIgnoreCase("delete")) {
+				groupManager.deleteGroup(args[0]);
 
-				groupsYml.getConfig().set("groups." + args[1], null);
+				groupsYml.getConfig().set("groups." + args[0], null);
 				groupsYml.saveConfig();
 				groupsYml.reloadConfig();
 				
-				sender.sendMessage(ChatColor.GREEN + "Successfully deleted group \"" + args[1] + "\"");
+				sender.sendMessage(ChatColor.GREEN + "Successfully deleted group \"" + args[0] + "\"");
 				return true;
 			}
 			
-			else if ((args[0].equalsIgnoreCase("add")) || (args[0].equalsIgnoreCase("a"))) {
-				for (int i = 2; i < args.length; i++) {
-					String memberNameLowcase = args[i].toLowerCase();
+			else {
+				for (int i = 1; i < args.length; i++) {
+					String playername = args[i].substring(1).toLowerCase();
 					
-					if (!group.getMembers().contains(memberNameLowcase)) {
-						groupManager.addMemberToGroup(args[1], memberNameLowcase);
-						sender.sendMessage(ChatColor.GREEN + "Added \"" + args[i] + "\" to group \"" + args[1] + "\"");
+					if (args[i].startsWith("+")) {
+						if (!group.getMembers().contains(playername)) {
+							groupManager.addMemberToGroup(args[0], playername);
+							sender.sendMessage(ChatColor.GREEN + "Added \"" + playername + "\" to group \"" + args[0] + "\"");
+						}
+						
+						else {
+							sender.sendMessage(ChatColor.RED + "\"" + playername + "\" is already a member of group \"" + args[0] + "\"!");
+						}
 					}
 					
-					else {
-						sender.sendMessage(ChatColor.RED + "\"" + args[i] + "\" is already a member of group \"" + args[1] + "\"!");
+					else if (args[i].startsWith("-")) {
+						if (group.getMembers().contains(playername)) {
+							groupManager.removeMemberFromGroup(args[0], playername);
+							sender.sendMessage(ChatColor.GREEN + "Removed \"" + playername + "\" from group \"" + args[0] + "\"");
+						}
+						
+						else {
+							sender.sendMessage(ChatColor.RED + "\"" + playername + "\" isn't a member of group \"" + args[0] + "\"!");
+						}
 					}
 				}
 				
-				// TODO Make changes to the copy on file if "always-backup-changes" is set to true
 				return true;
 			}
-			
-			else if ((args[0].equalsIgnoreCase("remove")) || (args[0].equalsIgnoreCase("r"))) {
-				for (int i = 2; i < args.length; i++) {
-					String memberNameLowcase = args[i].toLowerCase();
-					
-					if (group.getMembers().contains(memberNameLowcase)) {
-						groupManager.removeMemberFromGroup(args[1], memberNameLowcase);
-						sender.sendMessage(ChatColor.GREEN + "Removed \"" + args[i] + "\" from group \"" + args[1] + "\"");
-					}
-					
-					else {
-						sender.sendMessage(ChatColor.RED + "\"" + args[i] + "\" isn't a member of group \"" + args[1] + "\"!");
-					}
-				}
-				
-				// TODO Make changes to the copy on file if "always-backup-changes" is set to true
-				return true;
-			}
-			
 		}
 		
 		else if (command.getName().equals("groups")) {
 			String list = ChatColor.GREEN + "Groups: " + ChatColor.WHITE;
 			
-			for (String name : groupManager.getAllGroupNames()) {
-				list = list + name + " ";
+			if (groupManager.getAllGroupNames().isEmpty()) {
+				list = list + ChatColor.RED + "none";
 			}
 			
-			sender.sendMessage(list.trim());
+			else {
+				for (String name : groupManager.getAllGroupNames()) {
+					list = list + name + " ";
+				}
+				
+				list = list.trim();
+			}
+			
+			sender.sendMessage(list);
 			return true;
 		}
 		
