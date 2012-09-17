@@ -1,17 +1,17 @@
 name: Aside
 description: Better multi-user private chat, sound notifications and name highlighting for mentioned players, and other assorted chat improvements.
-version: 1.0
+version: 1.0.1
 author: makskay
 
 main: me.makskay.bukkit.aside.AsidePlugin
 
 commands:
-  group:
+  chatgroup:
     description: Create and edit groups to whom messages can be sent.
     usage: /<command> <group-name> <members|delete|+playername|-playername>
     permission: aside.user
     permission-message: You don't have permission to create and edit groups!
-  groups:
+  chatgroups:
     description: List the available groups.
     usage: /<command>
     permission: aside.user

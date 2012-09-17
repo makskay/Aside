@@ -1,7 +1,7 @@
 package me.makskay.bukkit.aside;
 
 import me.makskay.bukkit.aside.util.ConfigAccessor;
-//import me.makskay.bukkit.aside.util.Updater;
+import me.makskay.bukkit.aside.util.Updater;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,10 +29,10 @@ public class AsidePlugin extends JavaPlugin {
 		configYml.saveDefaultConfig();
 		groupsYml.saveDefaultConfig();
 		
-		/*if (configYml.getConfig().getBoolean("auto-update")) { // auto-updater stuff
+		if (configYml.getConfig().getBoolean("auto-update")) { // auto-updater stuff
 			@SuppressWarnings("unused")
 			Updater updater = new Updater(this, "aside", this.getFile(), Updater.UpdateType.DEFAULT, false);
-		}*/
+		}
 		
 		groupManager = new GroupManager(this);
 		playerManager = new PlayerManager(this);
@@ -50,7 +50,7 @@ public class AsidePlugin extends JavaPlugin {
 	}
 	
 	public boolean onCommand (CommandSender sender, Command command, String commandLabel, String[] args) {
-		if (command.getName().equalsIgnoreCase("group")) {
+		if (command.getName().equalsIgnoreCase("chatgroup")) {
 			if (args.length == 0) { // if there were no arguments
 				return false;
 			}
@@ -151,7 +151,7 @@ public class AsidePlugin extends JavaPlugin {
 			}
 		}
 		
-		else if (command.getName().equals("groups")) {
+		else if (command.getName().equals("chatgroups")) {
 			String list = ChatColor.GREEN + "Groups: " + ChatColor.WHITE;
 			
 			if (groupManager.getAllGroupNames().isEmpty()) {

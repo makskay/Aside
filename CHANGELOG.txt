@@ -1,5 +1,8 @@
+1.0.1
+* Added auto-installation of updates from dev.bukkit.org
+
 1.0
-+ Added @tagging, >tagging and >>tagging within messages
-+ Added sound notifications for tagged players
-+ Added /group command used to manage chat groups
-+ Added /groups command used to list chat groups
+* Added @tagging, >tagging and >>tagging within messages
+* Added sound notifications for tagged players
+* Added /chatgroup command used to manage chat groups
+* Added /chatgroups command used to list chat groups
