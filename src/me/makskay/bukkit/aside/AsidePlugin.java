@@ -50,7 +50,7 @@ public class AsidePlugin extends JavaPlugin {
 	}
 	
 	public boolean onCommand (CommandSender sender, Command command, String commandLabel, String[] args) {
-		if (command.getName().equalsIgnoreCase("chatgroup")) {
+		if ((command.getName().equalsIgnoreCase("chatgroup")) || (command.getName().equalsIgnoreCase("chat")) || (command.getName().equalsIgnoreCase("ch"))) {
 			if (args.length == 0) { // if there were no arguments
 				return false;
 			}
@@ -151,7 +151,7 @@ public class AsidePlugin extends JavaPlugin {
 			}
 		}
 		
-		else if (command.getName().equals("chatgroups")) {
+		else if ((command.getName().equals("chatgroups")) || (command.getName().equals("chats"))) {
 			String list = ChatColor.GREEN + "Groups: " + ChatColor.WHITE;
 			
 			if (groupManager.getAllGroupNames().isEmpty()) {
@@ -168,6 +168,26 @@ public class AsidePlugin extends JavaPlugin {
 			
 			sender.sendMessage(list);
 			return true;
+		}
+		
+		else if (command.getName().equals("away")) {
+			Player player = (Player) sender;
+			if (player == null) {
+				sender.sendMessage("Only a player may use that command!");
+				return true;
+			}
+			
+			// TODO Mark player as AFK, so that messages sent directly or privately to them are saved
+		}
+		
+		else if (command.getName().equals("memos")) {
+			Player player = (Player) sender;
+			if (player == null) {
+				sender.sendMessage("Only a player may use that command!");
+				return true;
+			}
+			
+			// TODO List saved messages (memos) for the player
 		}
 		
 		return false;

@@ -1,18 +1,25 @@
 name: Aside
 description: Better multi-user private chat, sound notifications and name highlighting for mentioned players, and other assorted chat improvements.
-version: 1.0.1
+version: 1.1
 author: makskay
 
 main: me.makskay.bukkit.aside.AsidePlugin
 
 commands:
+  away:
+    description: Mark yourself as away from Minecraft, saving incoming messages for later viewing.
+    usage: /<command>
+    permission: aside.user
+    permission-message: You don't have permission to mark yourself as away from Minecraft!
   chatgroup:
     description: Create and edit groups to whom messages can be sent.
     usage: /<command> <group-name> <members|delete|+playername|-playername>
+    alias: [chat, ch]
     permission: aside.user
     permission-message: You don't have permission to create and edit groups!
   chatgroups:
     description: List the available groups.
     usage: /<command>
+    alias: [chats]
     permission: aside.user
     permission-message: You don't have permission to view the list of available groups!
