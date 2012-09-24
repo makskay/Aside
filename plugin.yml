@@ -23,3 +23,8 @@ commands:
     alias: [chats]
     permission: aside.user
     permission-message: You don't have permission to view the list of available groups!
+  memos:
+    description: View saved messages.
+    usage: /<command> [clear]
+    permission: aside.user
+    permission-message: You don't have permission to view saved messages!
