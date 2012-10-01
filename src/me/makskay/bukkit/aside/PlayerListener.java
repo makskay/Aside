@@ -54,7 +54,7 @@ public class PlayerListener implements Listener {
 					}
 				
 					if (!privateRecipients.isEmpty()) {
-						newMessage.add(ChatColor.GRAY + word + ChatColor.WHITE); // add color formatting
+						newMessage.add(ChatColor.LIGHT_PURPLE + word + ChatColor.GRAY); // add color formatting
 					}
 				
 					else {
@@ -72,7 +72,7 @@ public class PlayerListener implements Listener {
 				
 				if (recipient != null) {
 					privateRecipients.add(recipient);
-					newMessage.add(ChatColor.GRAY + word + ChatColor.WHITE); // add color formatting
+					newMessage.add(ChatColor.AQUA + word + ChatColor.GRAY); // add color formatting
 				}
 				
 				else {
@@ -103,9 +103,9 @@ public class PlayerListener implements Listener {
 			newMessageText = newMessageText + word + " "; // add color formatting to the outgoing message
 		}
 		
-		event.setMessage(newMessageText.trim());
-		
 		if (privateRecipients.isEmpty()) { // if there are no >mention or >>mention tags
+			event.setMessage(newMessageText.trim());
+			
 			for (Player recipient : directRecipients) {
 				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players @mentioned
 				//plugin.getPlayerManager().saveMessage(recipient, player.getName() + ": " + newMessageText); // TODO Only do this if recip is AFK
@@ -113,9 +113,10 @@ public class PlayerListener implements Listener {
 		}
 		
 		else { // if there are one or more >mention or >>mention tags
+			event.setMessage(ChatColor.GRAY + newMessageText.trim());
+			
 			event.getRecipients().clear();
 			event.getRecipients().add(event.getPlayer());
-			
 			
 			for (Player recipient : privateRecipients) {
 				event.getRecipients().add(recipient);

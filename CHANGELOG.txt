@@ -2,6 +2,7 @@
 * Added command aliases: you can now use the shorter /chat (or /ch) in place of /chatgroup, and /chats in place of /chatgroups
 * Added /away command used to mark yourself as away from Minecraft, saving incoming messages as memos for later viewing
 * Added /memos command used to view saved messages
+* Changed the formatting of private messages to make their scope more instantly apparent
 
 1.0.1
 * Added auto-installation of updates from dev.bukkit.org
