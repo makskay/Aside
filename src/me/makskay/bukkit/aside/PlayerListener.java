@@ -25,18 +25,11 @@ public class PlayerListener implements Listener {
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		String message = event.getMessage();
-		
 		String[] words = message.split(" "); // split the message into separate words to be processed individually
 		
 		HashSet<Player> privateRecipients = new HashSet<Player>();
 		HashSet<Player> directRecipients = new HashSet<Player>();
-		HashSet<Player> channelRecipients = new HashSet<Player>();
-		
 		ArrayList<String> newMessage = new ArrayList<String>();
-		
-		for (Player recipient : Bukkit.getOnlinePlayers()) {
-			channelRecipients.add(recipient); // TODO Implement proper chat-to-group functionality
-		}
 		
 		for (String word : words) {
 			if (word.startsWith(">>")) { // if the word is a >>mention tag
@@ -103,12 +96,18 @@ public class PlayerListener implements Listener {
 			newMessageText = newMessageText + word + " "; // add color formatting to the outgoing message
 		}
 		
+		PlayerManager playerManager = plugin.getPlayerManager();
+		Player player = event.getPlayer();
+		
 		if (privateRecipients.isEmpty()) { // if there are no >mention or >>mention tags
 			event.setMessage(newMessageText.trim());
 			
 			for (Player recipient : directRecipients) {
 				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players @mentioned
-				//plugin.getPlayerManager().saveMessage(recipient, player.getName() + ": " + newMessageText); // TODO Only do this if recip is AFK
+				
+				if (playerManager.playerIsAfk(recipient)) {
+					playerManager.saveMessage(recipient, player.getName() + ": " + newMessageText); 
+				}
 			}
 		}
 		
@@ -120,9 +119,11 @@ public class PlayerListener implements Listener {
 			
 			for (Player recipient : privateRecipients) {
 				event.getRecipients().add(recipient);
-				
 				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players >mentioned or >>mentioned
-				//plugin.getPlayerManager().saveMessage(recipient, player.getName() + ": " + newMessageText); // TODO Only do this if recip is AFK
+				
+				if (playerManager.playerIsAfk(recipient)) {
+					playerManager.saveMessage(recipient, player.getName() + ": " + newMessageText); 
+				}
 			}
 		}
 	}

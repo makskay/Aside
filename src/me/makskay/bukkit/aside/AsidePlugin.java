@@ -50,7 +50,9 @@ public class AsidePlugin extends JavaPlugin {
 	}
 	
 	public boolean onCommand (CommandSender sender, Command command, String commandLabel, String[] args) {
-		if ((command.getName().equalsIgnoreCase("chatgroup")) || (command.getName().equalsIgnoreCase("chat")) || (command.getName().equalsIgnoreCase("ch"))) {
+		String commandName = command.getName();
+		
+		if ((commandName.equalsIgnoreCase("chatgroup")) || (commandName.equalsIgnoreCase("chat")) || (commandName.equalsIgnoreCase("ch"))) {
 			if (args.length == 0) { // if there were no arguments
 				return false;
 			}
@@ -151,7 +153,7 @@ public class AsidePlugin extends JavaPlugin {
 			}
 		}
 		
-		else if ((command.getName().equals("chatgroups")) || (command.getName().equals("chats"))) {
+		else if ((commandName.equals("chatgroups")) || (commandName.equals("chats"))) {
 			String list = ChatColor.GREEN + "Groups: " + ChatColor.WHITE;
 			
 			if (groupManager.getAllGroupNames().isEmpty()) {
@@ -170,17 +172,37 @@ public class AsidePlugin extends JavaPlugin {
 			return true;
 		}
 		
-		else if (command.getName().equals("away")) {
+		else if (commandName.equals("away")) {
 			Player player = (Player) sender;
 			if (player == null) {
 				sender.sendMessage("Only a player may use that command!");
 				return true;
 			}
 			
-			// TODO Mark player as AFK, so that messages sent directly or privately to them are saved
+			if (playerManager.playerIsAfk(player)) {
+				Bukkit.broadcastMessage(player.getName() + " is no longer away");
+				playerManager.releaseAfkPlayer(player);
+				
+				return true;
+			}
+			
+			String message = "";
+			
+			if (args.length > 0) {
+				for (String s : args) {
+					message = message + s + " ";
+				}
+				
+				message = ": " + message.trim();
+			}
+			
+			Bukkit.broadcastMessage(player.getName() + " is away from Minecraft" + message);
+			playerManager.registerAfkPlayer(player);
+			
+			return true;
 		}
 		
-		else if (command.getName().equals("memos")) {
+		else if (commandName.equals("memos")) {
 			Player player = (Player) sender;
 			if (player == null) {
 				sender.sendMessage("Only a player may use that command!");

@@ -2,16 +2,19 @@ package me.makskay.bukkit.aside;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.bukkit.entity.Player;
 
 public class PlayerManager {
 	//private AsidePlugin plugin;
 	private HashMap<String, ArrayList<String>> savedMessages;
+	private HashSet<String> afkPlayers;
 	
 	public PlayerManager(AsidePlugin plugin) {
 		//this.plugin = plugin;
 		savedMessages = new HashMap<String, ArrayList<String>>();
+		afkPlayers = new HashSet<String>();
 	}
 	
 	public void registerPlayer(Player player) {
@@ -19,7 +22,9 @@ public class PlayerManager {
 	}
 	
 	public void releasePlayer(Player player) {
-		savedMessages.remove(player.getName());
+		String playername = player.getName();
+		savedMessages.remove(playername);
+		this.releaseAfkPlayer(playername);
 	}
 	
 	public void saveMessage(Player player, String message) {
@@ -32,5 +37,21 @@ public class PlayerManager {
 	
 	public void clearSavedMessages(Player player) {
 		savedMessages.get(player.getName()).clear();
+	}
+	
+	public void registerAfkPlayer(Player player) {
+		afkPlayers.add(player.getName());
+	}
+	
+	public void releaseAfkPlayer(Player player) {
+		afkPlayers.remove(player.getName());
+	}
+	
+	public void releaseAfkPlayer(String playername) {
+		afkPlayers.remove(playername);
+	}
+	
+	public boolean playerIsAfk(Player player) {
+		return afkPlayers.contains(player.getName());
 	}
 }
