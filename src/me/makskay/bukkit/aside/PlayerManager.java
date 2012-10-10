@@ -46,7 +46,7 @@ public class PlayerManager {
 	public void releaseAfkPlayer(Player player) {
 		afkPlayers.remove(player.getName());
 	}
-	
+ 	
 	public void releaseAfkPlayer(String playername) {
 		afkPlayers.remove(playername);
 	}

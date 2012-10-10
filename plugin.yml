@@ -7,7 +7,7 @@ main: me.makskay.bukkit.aside.AsidePlugin
 
 commands:
   away:
-    description: Mark yourself as away from Minecraft, saving incoming messages for later viewing.
+    description: Toggle whether you're away. While away, incoming messages are saved for later viewing.
     usage: /<command> [message]
     permission: aside.user
     permission-message: You don't have permission to mark yourself as away from Minecraft!
@@ -25,6 +25,6 @@ commands:
     permission-message: You don't have permission to view the list of available groups!
   memos:
     description: View saved messages.
-    usage: /<command> [clear]
+    usage: /<command> [-clear]
     permission: aside.user
     permission-message: You don't have permission to view saved messages!

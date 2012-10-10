@@ -3,7 +3,6 @@ package me.makskay.bukkit.aside;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -30,6 +29,10 @@ public class PlayerListener implements Listener {
 		HashSet<Player> privateRecipients = new HashSet<Player>();
 		HashSet<Player> directRecipients = new HashSet<Player>();
 		ArrayList<String> newMessage = new ArrayList<String>();
+		
+		PlayerManager playerManager = plugin.getPlayerManager();
+		Player player = event.getPlayer();
+		String playername = player.getName();
 		
 		for (String word : words) {
 			if (word.startsWith(">>")) { // if the word is a >>mention tag
@@ -96,9 +99,6 @@ public class PlayerListener implements Listener {
 			newMessageText = newMessageText + word + " "; // add color formatting to the outgoing message
 		}
 		
-		PlayerManager playerManager = plugin.getPlayerManager();
-		Player player = event.getPlayer();
-		
 		if (privateRecipients.isEmpty()) { // if there are no >mention or >>mention tags
 			event.setMessage(newMessageText.trim());
 			
@@ -106,14 +106,13 @@ public class PlayerListener implements Listener {
 				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players @mentioned
 				
 				if (playerManager.playerIsAfk(recipient)) {
-					playerManager.saveMessage(recipient, player.getName() + ": " + newMessageText); 
+					playerManager.saveMessage(recipient, playername + ": " + newMessageText); 
 				}
 			}
 		}
 		
 		else { // if there are one or more >mention or >>mention tags
 			event.setMessage(ChatColor.GRAY + newMessageText.trim());
-			
 			event.getRecipients().clear();
 			event.getRecipients().add(event.getPlayer());
 			
@@ -122,7 +121,7 @@ public class PlayerListener implements Listener {
 				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players >mentioned or >>mentioned
 				
 				if (playerManager.playerIsAfk(recipient)) {
-					playerManager.saveMessage(recipient, player.getName() + ": " + newMessageText); 
+					playerManager.saveMessage(recipient, playername + ": " + newMessageText); 
 				}
 			}
 		}

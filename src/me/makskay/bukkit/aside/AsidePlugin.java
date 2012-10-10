@@ -22,10 +22,8 @@ public class AsidePlugin extends JavaPlugin {
 		
 		configYml = new ConfigAccessor(this, "config.yml");
 		groupsYml = new ConfigAccessor(this, "groups.yml");
-		
 		configYml.reloadConfig();
 		groupsYml.reloadConfig();
-		
 		configYml.saveDefaultConfig();
 		groupsYml.saveDefaultConfig();
 		
@@ -209,7 +207,22 @@ public class AsidePlugin extends JavaPlugin {
 				return true;
 			}
 			
-			// TODO List saved messages (memos) for the player
+			if (args.length == 1) {
+				if (args[0].equals("-clear")) {
+					playerManager.getSavedMessages(player).clear();
+					player.sendMessage(ChatColor.GRAY + "Saved messages cleared");
+					return true;
+				}
+				
+				return false;
+			}
+			
+			player.sendMessage(" -- Saved messages -- ");
+			for (String message : playerManager.getSavedMessages(player)) {
+				player.sendMessage(message);
+			}
+			
+			return true;
 		}
 		
 		return false;
