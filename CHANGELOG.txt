@@ -3,6 +3,7 @@
 * Added /away command used to mark yourself as away from Minecraft, saving incoming messages as memos for later viewing
 * Added /memos command used to view saved messages
 * Changed the formatting of private messages to make their scope more instantly apparent
+* Fixed bug that exposed private messages to Dynmap
 
 1.0.1
 * Added auto-installation of updates from dev.bukkit.org

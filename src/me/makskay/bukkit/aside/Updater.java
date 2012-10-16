@@ -4,7 +4,7 @@
  * This class provides the means to safetly and easily update a plugin, or check to see if it is updated using dev.bukkit.org
  */
 
-package me.makskay.bukkit.aside.util;
+package me.makskay.bukkit.aside;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -326,6 +326,7 @@ public class Updater
     /**
      * Part of Zip-File-Extractor, modified by H31IX for use with Bukkit
      */
+	@SuppressWarnings("unchecked")
 	private void unzip(String file) 
     {
         try
@@ -333,7 +334,6 @@ public class Updater
             File fSourceZip = new File(file);
             String zipPath = file.substring(0, file.length()-4);
             ZipFile zipFile = new ZipFile(fSourceZip);
-            @SuppressWarnings("rawtypes")
 			Enumeration e = zipFile.entries();
             while(e.hasMoreElements())
             {

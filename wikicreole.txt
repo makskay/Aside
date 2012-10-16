@@ -1,0 +1,41 @@
+== Aside: the better chat plugin ==
+
+== What is Aside? ==
+
+=== Aside adds tags to chat ===
+@Tags >like >>these can be inserted anywhere in a chat message. They determine who can see the message, and who receives a notification when the message comes in.
+* A tag like //@this// sends a sound notification to the player whose name follows the //@// symbol. Everyone will still be able to see a message that contains one of these tags.
+* A tag like //>this// sends a sound notification to the player whose name follows the //>// symbol, and also restricts the viewing of the message to players who've been tagged.
+* A tag like //>>this// sends a sound notification to every player who's included in the group whose name follows the //>>// symbol. Only players in the tagged group(s) and players who've been tagged can see the message.
+
+=== Aside lets you make groups of people ===
+Making a group lets you use //>>tags// to easily send private messages to a bunch of people at once.
+* Make a new group with the ///group <group-name>// command. If the group already exists, the old group will be kept and you'll be told to pick a different name for your group.
+* Add members to a group by typing the ///group <group-name>// command, but adding //+<player-name>// tags onto the end. You'll only be allowed to do this, or perform any other action that changes the group, if you're the group's //owner// (the person who created the group) or someone with the //aside.admin// permission. If I were to create a new group called //gods// and add myself and Notch to the list, I'd type: ///group gods +makskay +Notch//
+* Remove members from a group by adding //-<player-name>// tags onto the end of the above command. If I wanted to remove Notch from the group I just created and add jeb_ in his place, I'd type: ///group gods -Notch +jeb_//
+* Delete a group that already exists by typing ///group <group-name> delete//. Like changing the group, only the group owner or someone with //aside.admin// permissions can perform this action.
+* See who's in a group by typing ///group <group-name> members//.
+* See a list of all of the existing groups by typing ///groups//.
+
+=== Aside is easy to set up, teach, and maintain ===
+Just drag and drop Aside into your plugins folder, give your regular users the //aside.user// permission, and Aside will take care of the rest.
+* Once one person begins correctly using the chat tags, others will notice them and figure out how the tags work for themselves.
+* By default, Aside will automatically check for and install new stable builds from dev.bukkit.org.
+* Future development won't jeopardize the intuitiveness of usage - I promise :)
+
+----
+
+== What else should I know about Aside? ==
+
+=== Aside is under active development ===
+There are plenty more features planned for deployment in the future.
+* Be on the lookout for the addition of a ///away// command: messages that mention you will be logged while you're away so you don't miss anything, and you can read them at your leisure when you return.
+* There's also plans to include a configurable option regarding whether //casual mentions// (that is, occurrences of playernames in messages without the use of any explicit tag) will still send a sound notification + name highlighting to the mentioned player.
+
+=== Aside won't fulfill certain roles ===
+There are some types of chat plugins to which I'm inherently opposed, and some functionality that's outside the scope of Aside (and therefore better addressed by another plugin.) Here's some features I guarantee I won't add:
+* Conventional chat channels, which allow players to "block out" the global chat. Most server community building occurs through the global chat, so conventional channels are almost never a good idea - and if you've got one of the rare servers on which global chat just moves too fast to be useful, Aside will maintain compatibility with other plugins that address the issue.
+* Spying on members' private messages. A big part of Aside's design philosophy is that //the scope of every message is instantly visible to the message recipients//, and adhering to this philosophy is what keeps Aside simple and intuitive to use - so, if some players suddenly start seeing messages meant for others, it's a recipe for disaster. It's also trivial to install another plugin that does the spying for you if you really, really need to keep tabs on everything that's going on (keeping in mind that "professional" griefers will be using an offsite chat like Skype to coordinate their attacks anyway, so spying is unlikely to do you much good.)
+
+=== Aside is developed by makskay ===
+I am myself a server administrator, and I use Aside as an integral feature on the server I help to run. You can often play with pilot builds of Aside, as well as many of my other plugins, over at [[http://remypas.com|remypas.com]].

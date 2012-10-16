@@ -1,7 +1,5 @@
 package me.makskay.bukkit.aside;
 
-import me.makskay.bukkit.aside.util.ConfigAccessor;
-import me.makskay.bukkit.aside.util.Updater;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -179,6 +177,7 @@ public class AsidePlugin extends JavaPlugin {
 			
 			if (playerManager.playerIsAfk(player)) {
 				Bukkit.broadcastMessage(player.getName() + " is no longer away");
+				player.chat("/memos");
 				playerManager.releaseAfkPlayer(player);
 				
 				return true;
@@ -217,9 +216,15 @@ public class AsidePlugin extends JavaPlugin {
 				return false;
 			}
 			
-			player.sendMessage(" -- Saved messages -- ");
-			for (String message : playerManager.getSavedMessages(player)) {
-				player.sendMessage(message);
+			if (playerManager.getSavedMessages(player).isEmpty()) {
+				player.sendMessage(ChatColor.RED + "There are no saved messages!");
+			}
+			
+			else {
+				player.sendMessage(" -- Saved messages -- ");
+				for (String message : playerManager.getSavedMessages(player)) {
+					player.sendMessage(message);
+				}
 			}
 			
 			return true;

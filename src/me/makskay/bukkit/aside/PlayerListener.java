@@ -23,6 +23,10 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler (priority = EventPriority.HIGHEST)
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
+		if (event.isCancelled()) {
+			return;
+		}
+		
 		String message = event.getMessage();
 		String[] words = message.split(" "); // split the message into separate words to be processed individually
 		
@@ -98,9 +102,10 @@ public class PlayerListener implements Listener {
 		for (String word : newMessage) {
 			newMessageText = newMessageText + word + " "; // add color formatting to the outgoing message
 		}
+		newMessageText = newMessageText.trim();
 		
 		if (privateRecipients.isEmpty()) { // if there are no >mention or >>mention tags
-			event.setMessage(newMessageText.trim());
+			event.setMessage(newMessageText);
 			
 			for (Player recipient : directRecipients) {
 				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players @mentioned
@@ -112,12 +117,11 @@ public class PlayerListener implements Listener {
 		}
 		
 		else { // if there are one or more >mention or >>mention tags
-			event.setMessage(ChatColor.GRAY + newMessageText.trim());
+			event.setMessage(ChatColor.GRAY + newMessageText);
 			event.getRecipients().clear();
-			event.getRecipients().add(event.getPlayer());
+			event.getRecipients().addAll(privateRecipients);
 			
 			for (Player recipient : privateRecipients) {
-				event.getRecipients().add(recipient);
 				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players >mentioned or >>mentioned
 				
 				if (playerManager.playerIsAfk(recipient)) {

@@ -1,4 +1,4 @@
-package me.makskay.bukkit.aside.util;
+package me.makskay.bukkit.aside;
 
 /** Credit to SagaciousZed for this utility class.
  ** https://gist.github.com/3174347 
