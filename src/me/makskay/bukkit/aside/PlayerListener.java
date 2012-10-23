@@ -39,7 +39,11 @@ public class PlayerListener implements Listener {
 		String playername = player.getName();
 		
 		for (String word : words) {
-			if (word.startsWith(">>")) { // if the word is a >>mention tag
+			if (word.equals(">")) { // if the word is a > (quickreply) tag
+				// TODO add list of tags from last message to this message
+			}
+			
+			else if (word.startsWith(">>")) { // if the word is a >>mention tag
 				ChatGroup group = plugin.getGroupManager().getGroupByName(word.substring(2));
 				
 				if (group != null) {
@@ -105,9 +109,23 @@ public class PlayerListener implements Listener {
 		newMessageText = newMessageText.trim();
 		
 		if (privateRecipients.isEmpty()) { // if there are no >mention or >>mention tags
-			event.setMessage(newMessageText);
+			if (plugin.USING_VAULT) {
+				event.setCancelled(true);
+			}
+			
+			else {
+				event.setMessage(newMessageText);
+			}
 			
 			for (Player recipient : directRecipients) {
+				if (plugin.USING_VAULT) { // TODO this is untested
+					String recipname = recipient.getName();
+					String worldname = recipient.getWorld().getName();
+					String prefix = AsidePlugin.chat.getPlayerPrefix(recipname, worldname);
+					String suffix = AsidePlugin.chat.getPlayerSuffix(recipname, worldname);
+					recipient.sendMessage(prefix + recipient.getDisplayName() + suffix + newMessageText);
+				}
+				
 				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players @mentioned
 				
 				if (playerManager.playerIsAfk(recipient)) {
@@ -117,11 +135,25 @@ public class PlayerListener implements Listener {
 		}
 		
 		else { // if there are one or more >mention or >>mention tags
-			event.setMessage(ChatColor.GRAY + newMessageText);
-			event.getRecipients().clear();
-			event.getRecipients().addAll(privateRecipients);
+			if (plugin.USING_VAULT) {
+				event.setCancelled(true);
+			}
 			
+			else {
+				event.setMessage(ChatColor.GRAY + newMessageText);
+				event.getRecipients().clear();
+				event.getRecipients().addAll(privateRecipients);
+			}
+				
 			for (Player recipient : privateRecipients) {
+				if (plugin.USING_VAULT) {
+					String recipname = recipient.getName();
+					String worldname = recipient.getWorld().getName();
+					String prefix = AsidePlugin.chat.getPlayerPrefix(recipname, worldname);
+					String suffix = AsidePlugin.chat.getPlayerSuffix(recipname, worldname);
+					recipient.sendMessage(prefix + recipient.getDisplayName() + suffix + ChatColor.GRAY + newMessageText);
+				}
+				
 				recipient.playEffect(recipient.getLocation(), Effect.CLICK2, 0); // play sound notification for players >mentioned or >>mentioned
 				
 				if (playerManager.playerIsAfk(recipient)) {

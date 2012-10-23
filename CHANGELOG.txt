@@ -2,8 +2,10 @@
 * Added command aliases: you can now use the shorter /chat (or /ch) in place of /chatgroup, and /chats in place of /chatgroups
 * Added /away command used to mark yourself as away from Minecraft, saving incoming messages as memos for later viewing
 * Added /memos command used to view saved messages
+* Added > (quickreply) tag for smoother private messaging
 * Changed the formatting of private messages to make their scope more instantly apparent
-* Fixed bug that exposed private messages to Dynmap
+* Fixed bug that strips chat tags of color when certain chat formatting plugins are used (requires Vault)
+* Fixed bug that exposed private messages to Dynmap (requires Vault)
 
 1.0.1
 * Added auto-installation of updates from dev.bukkit.org

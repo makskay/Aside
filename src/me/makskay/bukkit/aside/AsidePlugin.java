@@ -1,28 +1,52 @@
 package me.makskay.bukkit.aside;
 
+import java.util.logging.Logger;
+
+import net.milkbowl.vault.chat.Chat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AsidePlugin extends JavaPlugin {
+	public static Chat chat = null;
 	private GroupManager groupManager;
 	private PlayerManager playerManager;
-	
 	ConfigAccessor configYml;
 	ConfigAccessor groupsYml;
+	Logger log;
+	boolean USING_VAULT = false;
 	
 	public void onEnable() {
 		Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
+		log = this.getLogger();
+		
+		if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+			log.info("Vault not found; some plugin features may not work wholly as intended.");
+			log.info("Downloading Vault from http://dev.bukkit.org/server-mods/Vault is recommended");
+			log.info("to ensure complete functionality (especially compatability with other chat plugins).");
+		}
+		
+		else if (!setupChat()) {
+			log.info("Couldn't find a Vault-compatible chat formatting plugin.");
+			log.info("If you're using a non-Vault-compatible formatting plugin, some errors may occur.");
+			log.info("If your chat formatting isn't being handled by a plugin, you should be safe.");
+		}
+		
+		else {
+			USING_VAULT = true;
+		}
 		
 		configYml = new ConfigAccessor(this, "config.yml");
-		groupsYml = new ConfigAccessor(this, "groups.yml");
 		configYml.reloadConfig();
-		groupsYml.reloadConfig();
 		configYml.saveDefaultConfig();
+		
+		groupsYml = new ConfigAccessor(this, "groups.yml");
+		groupsYml.reloadConfig();
 		groupsYml.saveDefaultConfig();
 		
 		if (configYml.getConfig().getBoolean("auto-update")) { // auto-updater stuff
@@ -253,6 +277,15 @@ public class AsidePlugin extends JavaPlugin {
 		
 		return null;
 	}
+	
+	private boolean setupChat() {
+        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+        if (chatProvider != null) {
+            chat = chatProvider.getProvider();
+        }
+
+        return (chat != null);
+    }
 	
 	public GroupManager getGroupManager() {
 		return groupManager;

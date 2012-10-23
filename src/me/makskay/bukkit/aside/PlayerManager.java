@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 public class PlayerManager {
 	//private AsidePlugin plugin;
 	private HashMap<String, ArrayList<String>> savedMessages;
+	private HashMap<String, HashSet<String>> replyTags;
 	private HashSet<String> afkPlayers;
 	
 	public PlayerManager(AsidePlugin plugin) {
@@ -19,11 +20,13 @@ public class PlayerManager {
 	
 	public void registerPlayer(Player player) {
 		savedMessages.put(player.getName(), new ArrayList<String>());
+		replyTags.put(player.getName(), new HashSet<String>());
 	}
 	
 	public void releasePlayer(Player player) {
 		String playername = player.getName();
 		savedMessages.remove(playername);
+		replyTags.remove(playername);
 		this.releaseAfkPlayer(playername);
 	}
 	

@@ -5,6 +5,7 @@ author: makskay
 website: http://dev.bukkit.org/server-mods/Aside
 
 main: me.makskay.bukkit.aside.AsidePlugin
+softdepend: [Vault]
 
 commands:
   away:
